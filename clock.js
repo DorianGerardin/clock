@@ -1,16 +1,18 @@
 const DOTS_COUNT = 60
 const LOCALE = "en-GB"
 let clockDots = new Map()
+let lastTap = 0;
+let tickInterval = null
 
 function switchTheme()
 {
-  theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  let theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', theme);
-  localStorage.setItem('theme', theme)
+  localStorage.setItem('clockTheme', theme)
 }
 
 function applyTheme() {
-  const theme = localStorage.getItem('theme');
+  const theme = localStorage.getItem('clockTheme');
 
   if (theme) {
     document.documentElement.dataset.theme = theme;
@@ -98,7 +100,7 @@ function setClockDots()
     let y = Math.sin(rad)
     dotElm.style.translate = `${x * clockRadius}px ${y * clockRadius}px`
     let second = i
-    if(i == 0) {
+    if(i === 0) {
       second = 60
     }
     clockDots.set(second, dotElm);
@@ -106,7 +108,6 @@ function setClockDots()
   clockDots = new Map([...clockDots].sort(([keyA], [keyB]) => keyB - keyA));
 
   setDate()
-  tick()
 }
 
 function tick() {
@@ -116,7 +117,7 @@ function tick() {
 
   const nowSeconds = new Date().getSeconds();
   setDate()
-  if(nowSeconds == 0)
+  if(nowSeconds === 0)
   {
     document.querySelectorAll(".clock-dot.active").forEach(e => e.classList.remove("active"))
   }
@@ -136,17 +137,35 @@ function tick() {
   }
 }
 
+function startClock() {
+  clearInterval(tickInterval)
+  clockDots.forEach(dot => dot.remove());
+  clockDots.clear()
+  setClockDots()
+  tick()
+  tickInterval = setInterval(tick, 1000);
+}
+
+function main() {
+  applyTheme()
+  applyDate()
+  startClock()
+}
+
+main()
+
+window.addEventListener('resize', updateDotTranslate);
+
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden) {
-    tick();
+    startClock()
   }
 });
 
-window.addEventListener("dblclick", (event) => { 
+window.addEventListener("dblclick", (event) => {
   toggleDate()
 })
 
-let lastTap = 0;
 window.addEventListener("touchend", (event) => {
   const currentTime = new Date().getTime();
   const tapLength = currentTime - lastTap;
@@ -156,11 +175,3 @@ window.addEventListener("touchend", (event) => {
   }
   lastTap = currentTime;
 });
-
-window.addEventListener('resize', updateDotTranslate);
-
-applyTheme()
-applyDate()
-setClockDots()
-setInterval(tick, 1000);
-
