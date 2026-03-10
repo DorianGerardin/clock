@@ -1,0 +1,143 @@
+* {
+  margin: 0;
+}
+
+:root {
+  --pi: 3.1416;
+  --main-bg-color: #131313;
+  --color-clock: #ff2020;
+  --color-empty-dot: #232323;
+  --clock-radius: 400;
+  --dot-size: calc((((2 * var(--pi) * var(--clock-radius)) / 60) * 0.7) * 1px);
+}
+
+[data-theme="light"] {
+  --main-bg-color: #fbfbfb;
+  --color-clock: #2e4dff;
+  --color-empty-dot: #d3d3d3;
+}
+
+body {
+  background-color: var(--main-bg-color);
+  font-size: 16px;
+}
+
+#clock-container {
+  width: 100%;
+  height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#clock {
+  position: relative;
+}
+
+#date-container {
+  cursor: pointer;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  color: var(--color-clock);
+}
+
+#time {
+  font-size: calc(var(--clock-radius) * 1px / 2.15);
+  font-weight: bold;
+  font-family: "Orbitron", sans-serif;
+}
+
+#date {
+  text-align: center;
+  font-size: calc(var(--clock-radius) * 1px / 12);
+  font-weight: 600;
+  font-family: "Manrope", sans-serif;
+}
+
+#date.hidden {
+  display: none;
+}
+
+.clock-dot {
+  transform-origin: center;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  border-radius: 50%;
+  width: var(--dot-size);
+  height: var(--dot-size);
+  background-color: var(--color-empty-dot);
+}
+
+.clock-dot::after {
+  content: "";
+  position: absolute;
+  display: block;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-clock);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.clock-dot.active::after {
+  opacity: 1;
+}
+
+.clock-dot.active::after {
+  opacity: 1;
+}
+
+@media (max-width: 480px) { 
+  :root {
+    --clock-radius: 150;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 767px) { 
+  :root {
+    --clock-radius: 175;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) { 
+  :root {
+    --clock-radius: 200;
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1200px) { 
+  :root {
+    --clock-radius: 225;
+  }
+}
+
+@media (min-width: 1201px) and (max-width: 1366px) {  
+  :root {
+    --clock-radius: 250;
+  }
+}
+
+@media (min-width: 1367px) and (max-width: 1440px) {  
+  :root {
+    --clock-radius: 275;
+  }
+}
+
+@media (min-width: 1441px) and (max-width: 1600px) {  
+  :root {
+    --clock-radius: 300;
+  }
+}
+
+@media (min-width: 1601px) and (max-width: 1920px) {  
+  :root {
+    --clock-radius: 325;
+  }
+}
