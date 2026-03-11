@@ -1,0 +1,21 @@
+{
+  "name": "DigiClock",
+  "short_name": "DigiClock",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "background_color": "#131313",
+  "theme_color": "#131313",
+  "icons": [
+    {
+      "src": "./img/clockIcon_192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./img/clockIcon_512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
