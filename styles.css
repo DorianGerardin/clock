@@ -35,6 +35,7 @@ body {
 }
 
 #date-container {
+  min-width: calc(var(--clock-radius)* 1.5px);
   cursor: pointer;
   position: absolute;
   left: 50%;
@@ -43,6 +44,7 @@ body {
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   color: var(--color-clock);
+  text-align: center;
 }
 
 #time {
@@ -52,7 +54,6 @@ body {
 }
 
 #date {
-  text-align: center;
   font-size: calc(var(--clock-radius) * 1px / 12);
   font-weight: 600;
   font-family: "Manrope", sans-serif;
