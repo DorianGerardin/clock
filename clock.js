@@ -125,16 +125,20 @@ function tick() {
   let remainingDots = new Map([...clockDots].filter(([key]) => key > nowSeconds));
   let previousDot = null
   let delay = 0;
-  const interval = 1000 / remainingDots.size; 
+  let tickStartDelay = 200
+  const interval = (1000 - tickStartDelay) / remainingDots.size; 
 
-  for (const [key, value] of remainingDots) {
-    setTimeout(() => {
-      previousDot?.classList.remove("active")
-      value.classList.add("active");
-      previousDot = value
-    }, delay);
-    delay += interval
-  }
+  setTimeout(() => {
+    console.log([...remainingDots.keys()].includes(60))
+    for (const [key, value] of remainingDots) {
+      setTimeout(() => {
+        previousDot?.classList.remove("active")
+        value.classList.add("active");
+        previousDot = value
+      }, delay);
+      delay += interval
+    }
+  }, tickStartDelay)
 }
 
 function startClock() {
