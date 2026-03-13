@@ -1,4 +1,4 @@
-const CACHE_NAME = "digiclock-cache-v1";
+const CACHE_NAME = "digiclock-cache-v2";
 
 const urlsToCache = [
   "./",

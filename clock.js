@@ -56,6 +56,11 @@ function getNowDate() {
   return `${dayName}, ${monthName} ${now.getDate()}, ${now.getFullYear()}`
 }
 
+function getRemainMs()
+{
+  return 1000 - new Date().getMilliseconds()
+}
+
 function setDate() 
 {
   document.getElementById("time").innerHTML = getNowHour()
@@ -112,7 +117,6 @@ function setClockDots()
 
 function tick() {
 
-  clockDots.forEach(dot => dot.classList.remove('active'));
   setActiveDots()
 
   const nowSeconds = new Date().getSeconds();
@@ -123,13 +127,13 @@ function tick() {
   }
 
   let remainingDots = new Map([...clockDots].filter(([key]) => key > nowSeconds));
+  remainingDots = new Map([...remainingDots].slice(Math.floor(remainingDots.size / (1000 / new Date().getMilliseconds())))); 
   let previousDot = null
   let delay = 0;
-  let tickStartDelay = 200
-  const interval = (1000 - tickStartDelay) / remainingDots.size; 
+  let tickStartDelay = getRemainMs() / 4
+  const interval = (getRemainMs() - tickStartDelay) / remainingDots.size; 
 
   setTimeout(() => {
-    console.log([...remainingDots.keys()].includes(60))
     for (const [key, value] of remainingDots) {
       setTimeout(() => {
         previousDot?.classList.remove("active")
@@ -139,6 +143,10 @@ function tick() {
       delay += interval
     }
   }, tickStartDelay)
+
+  setTimeout(() => {
+    tick()
+  }, getRemainMs())
 }
 
 function startClock() {
@@ -147,7 +155,6 @@ function startClock() {
   clockDots.clear()
   setClockDots()
   tick()
-  tickInterval = setInterval(tick, 1000);
 }
 
 function main() {
