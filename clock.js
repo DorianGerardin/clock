@@ -1,4 +1,5 @@
 const DOTS_COUNT = 60
+const TICK = 1000
 const LOCALE = "en-GB"
 let clockDots = new Map()
 let lastTap = 0;
@@ -58,7 +59,7 @@ function getNowDate() {
 
 function getRemainMs()
 {
-  return 1000 - new Date().getMilliseconds()
+  return TICK - new Date().getMilliseconds()
 }
 
 function setDate() 
@@ -69,6 +70,7 @@ function setDate()
 
 function setActiveDots() 
 {
+  clockDots.forEach(dot => dot.classList.remove("active"));
   const nowSeconds = new Date().getSeconds();
   let activeDots = new Map([...clockDots].filter(([key]) => key <= nowSeconds));
   for (const [key, value] of activeDots) {
@@ -111,14 +113,12 @@ function setClockDots()
     clockDots.set(second, dotElm);
   }
   clockDots = new Map([...clockDots].sort(([keyA], [keyB]) => keyB - keyA));
-
   setDate()
 }
 
 function tick() {
 
   setActiveDots()
-
   const nowSeconds = new Date().getSeconds();
   setDate()
   if(nowSeconds === 0)
@@ -126,23 +126,29 @@ function tick() {
     document.querySelectorAll(".clock-dot.active").forEach(e => e.classList.remove("active"))
   }
 
-  let remainingDots = new Map([...clockDots].filter(([key]) => key > nowSeconds));
-  remainingDots = new Map([...remainingDots].slice(Math.floor(remainingDots.size / (1000 / new Date().getMilliseconds())))); 
-  let previousDot = null
-  let delay = 0;
-  let tickStartDelay = getRemainMs() / 4
+  let remainingDots = new Map([...clockDots].filter(([key]) => key > nowSeconds)) // seconds
+  remainingDots = new Map([...remainingDots].filter(([key]) => key <= 60 - (Math.floor(remainingDots.size * (new Date().getMilliseconds() / TICK))))) // milliseconds
+
+  const dots = [...remainingDots.values()];
+  let previousDot = null;
+  let startTime = null;
+  let tickStartDelay = getRemainMs() / 8
   const interval = (getRemainMs() - tickStartDelay) / remainingDots.size; 
 
-  setTimeout(() => {
-    for (const [key, value] of remainingDots) {
-      setTimeout(() => {
-        previousDot?.classList.remove("active")
-        value.classList.add("active");
-        previousDot = value
-      }, delay);
-      delay += interval
+  function animate(timestamp) {
+    if (!startTime) startTime = timestamp;
+    const elapsed = timestamp - startTime;
+    const index = Math.floor(elapsed / interval);
+
+    if (index < dots.length) {
+      previousDot?.classList.remove("active");
+      dots[index].classList.add("active");
+      previousDot = dots[index];
+      requestAnimationFrame(animate);
     }
-  }, tickStartDelay)
+  }
+
+  setTimeout(() => requestAnimationFrame(animate), tickStartDelay);
 
   setTimeout(() => {
     tick()
@@ -180,7 +186,7 @@ window.addEventListener("dblclick", (event) => {
 window.addEventListener("touchend", (event) => {
   const currentTime = new Date().getTime();
   const tapLength = currentTime - lastTap;
-  if (tapLength < 300 && tapLength > 0) {
+  if (tapLength < 200 && tapLength > 0) {
     toggleDate()
     event.preventDefault();
   }
